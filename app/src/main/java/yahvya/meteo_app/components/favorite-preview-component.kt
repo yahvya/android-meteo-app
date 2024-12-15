@@ -4,27 +4,31 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import yahvya.meteo_app.dtos.WeatherDto
 
 /**
- * @brief weather preview component
+ * @brief favorite preview component
  * @param modifier modifier
- * @param weatherDto weather dto
- * @param onButtonClicked on information button clicked
+ * @param weatherDto weather data
+ * @param isFavorite state to update of favorite state pushed
  */
 @Composable
-fun WeatherPreviewComponent(
+fun FavoritePreviewComponent(
     modifier: Modifier,
     weatherDto: WeatherDto,
-    onButtonClicked: () -> Unit
+    isFavorite: MutableState<Boolean>
 ){
     Row(
         modifier= modifier,
@@ -32,16 +36,28 @@ fun WeatherPreviewComponent(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(weatherDto.placeName)
-        IconButton(onClick = onButtonClicked) {
-            Icon(imageVector = Icons.Filled.Info, contentDescription = "Informations")
+        IconButton(onClick = {isFavorite.value = !isFavorite.value}) {
+            if(isFavorite.value)
+                Icon(
+                    imageVector = Icons.Filled.Favorite,
+                    contentDescription = "Favorite state",
+                    tint= Color.Red
+                )
+            else
+                Icon(
+                    imageVector = Icons.Filled.Favorite,
+                    contentDescription = "Favorite state"
+                )
         }
     }
 }
 
 @Composable
 @Preview
-fun WeatherPreviewComponentPreview(){
-    WeatherPreviewComponent(
+fun FavoritePreviewComponentPreview(){
+    val favoriteSelectionState = remember {mutableStateOf(true)}
+
+    FavoritePreviewComponent(
         modifier = Modifier.fillMaxWidth(),
         weatherDto = WeatherDto(
             placeName = "Corte",
@@ -53,6 +69,6 @@ fun WeatherPreviewComponentPreview(){
             temperatureUnit = "°C",
             temperatureMeasures = mutableListOf()
         ),
-        onButtonClicked = {}
+        isFavorite = favoriteSelectionState
     )
 }
