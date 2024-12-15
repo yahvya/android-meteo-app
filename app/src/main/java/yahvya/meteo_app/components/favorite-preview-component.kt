@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -32,7 +34,8 @@ import yahvya.meteo_app.dtos.WeatherDto
 fun FavoritePreviewComponent(
     modifier: Modifier,
     weatherDto: WeatherDto,
-    isFavorite: MutableState<Boolean>
+    isFavorite: MutableState<Boolean>,
+    onButtonClicked: () -> Unit
 ){
     Row(
         modifier= modifier
@@ -42,18 +45,23 @@ fun FavoritePreviewComponent(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(weatherDto.placeName)
-        IconButton(onClick = {isFavorite.value = !isFavorite.value}) {
-            if(isFavorite.value)
-                Icon(
-                    imageVector = Icons.Filled.Favorite,
-                    contentDescription = "Favorite state",
-                    tint= Color.Red
-                )
-            else
-                Icon(
-                    imageVector = Icons.Filled.Favorite,
-                    contentDescription = "Favorite state"
-                )
+        Row {
+            IconButton(onClick = onButtonClicked) {
+                Icon(imageVector = Icons.Filled.Info, contentDescription = "Informations")
+            }
+            IconButton(onClick = {isFavorite.value = !isFavorite.value}) {
+                if(isFavorite.value)
+                    Icon(
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = "Favorite state",
+                        tint= Color.Red
+                    )
+                else
+                    Icon(
+                        imageVector = Icons.Filled.Favorite,
+                        contentDescription = "Favorite state"
+                    )
+            }
         }
     }
 }
@@ -75,6 +83,7 @@ fun FavoritePreviewComponentPreview(){
             temperatureUnit = "°C",
             temperatureMeasures = mutableListOf()
         ),
-        isFavorite = favoriteSelectionState
+        isFavorite = favoriteSelectionState,
+        onButtonClicked = {}
     )
 }

@@ -26,48 +26,23 @@ import androidx.compose.ui.unit.sp
 import yahvya.meteo_app.components.FavoritePreviewComponent
 import yahvya.meteo_app.components.WeatherPreviewComponent
 
+/**
+ * @brief home page
+ * @param modifier modifier
+ * @param lookAllFavoritesClick event on click to see all favorites
+ */
 @Composable
-fun HomeView(){
+fun HomeView(
+    modifier:Modifier,
+    lookAllFavoritesClick: (Int) -> Unit
+){
     val research = remember { mutableStateOf("") }
     val proposals = remember { mutableStateListOf<WeatherDto>() }
     val favorites = remember { mutableStateListOf<WeatherDto>() }
 
-    proposals.add(WeatherDto(
-        placeName = "Corte",
-        longitude = "-122.083922",
-        latitude = "37.4220936",
-        cloudMeasureUnit = "%",
-        windSpeedUnit = "Km/h",
-        rainMeasureUnit = "mm",
-        temperatureUnit = "°C",
-        temperatureMeasures = mutableListOf()
-    ))
-
-    favorites.add(WeatherDto(
-        placeName = "Corte",
-        longitude = "-122.083922",
-        latitude = "37.4220936",
-        cloudMeasureUnit = "%",
-        windSpeedUnit = "Km/h",
-        rainMeasureUnit = "mm",
-        temperatureUnit = "°C",
-        temperatureMeasures = mutableListOf()
-    ))
-
-    favorites.add(WeatherDto(
-        placeName = "Corte",
-        longitude = "-122.083922",
-        latitude = "37.4220936",
-        cloudMeasureUnit = "%",
-        windSpeedUnit = "Km/h",
-        rainMeasureUnit = "mm",
-        temperatureUnit = "°C",
-        temperatureMeasures = mutableListOf()
-    ))
-
     Column(
-        modifier= Modifier.padding(10.dp),
-        verticalArrangement = Arrangement.spacedBy(30.dp)
+        modifier= modifier.padding(10.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp),
     ) {
         SearchbarComponent(
             modifier= Modifier.fillMaxWidth(),
@@ -112,14 +87,15 @@ fun HomeView(){
                     FavoritePreviewComponent(
                         modifier = Modifier.fillMaxWidth(),
                         weatherDto = item,
-                        isFavorite = favoriteState
+                        isFavorite = favoriteState,
+                        onButtonClicked = {}
                     )
                 }
             }
 
             ClickableText(
                 text= AnnotatedString(text= "Voir plus ..."),
-                onClick = {},
+                onClick = lookAllFavoritesClick,
                 style = TextStyle(Color(13,110,253),18.sp, textDecoration = TextDecoration.Underline)
             )
         }
@@ -129,5 +105,8 @@ fun HomeView(){
 @Composable
 @Preview
 fun HomeViewPreview(){
-    HomeView()
+    HomeView(
+        modifier = Modifier,
+        lookAllFavoritesClick = {}
+    )
 }
