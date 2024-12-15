@@ -17,6 +17,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
+/**
+ * @brief Searchbar component
+ * @param modifier modifier
+ * @param textFieldValue text field content state
+ * @param searchbarPlaceholder default placeholder
+ * @param description button description
+ * @param onButtonClicked button click callback
+ * @param onValueChange text field value change callback
+ */
 @Composable
 fun SearchbarComponent(
     modifier: Modifier,
