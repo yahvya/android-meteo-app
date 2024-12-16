@@ -44,6 +44,7 @@ fun HomeView(
         modifier= modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp),
     ) {
+        // searchbar
         SearchbarComponent(
             modifier= Modifier.fillMaxWidth(),
             textFieldValue = research,
@@ -52,6 +53,7 @@ fun HomeView(
             onButtonClicked = {}
         )
 
+        // search propositions / results
         if(proposals.isNotEmpty()){
             Text(
                 text= "Résultats",
@@ -72,6 +74,7 @@ fun HomeView(
             }
         }
 
+        // certain favorites
         if(favorites.isNotEmpty()){
             Text(
                 text= "Vos favoris",
@@ -93,6 +96,7 @@ fun HomeView(
                 }
             }
 
+            // see more favorites
             ClickableText(
                 text= AnnotatedString(text= "Voir plus ..."),
                 onClick = lookAllFavoritesClick,

@@ -50,6 +50,7 @@ fun FavoritesView(modifier:Modifier){
         )
 
         if(favorites.isNotEmpty()){
+            // favorites list
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {

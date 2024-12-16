@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
@@ -30,6 +28,11 @@ import androidx.compose.ui.unit.sp
 import yahvya.meteo_app.dtos.HourlyWeatherData
 import yahvya.meteo_app.dtos.WeatherDto
 
+/**
+ * @brief text with border component
+ * @param key text to put in front
+ * @param value linked value
+ */
 @Composable
 fun BoxedText(key:String,value:String){
     Row(
@@ -70,7 +73,7 @@ fun MeteoDetailsView(
         modifier= modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
-
+        // header
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
@@ -86,6 +89,7 @@ fun MeteoDetailsView(
             }
         }
 
+        // choose time menu
         Column {
             ClickableText(
                 text=AnnotatedString("Choisir l'heure"),
@@ -108,6 +112,7 @@ fun MeteoDetailsView(
             }
         }
 
+        // print meteo data
         if(hourlyDataToShow.value !== null){
             // show the select hour data
             val hourlyWeatherData = hourlyDataToShow.value!!
