@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Text
@@ -18,13 +20,17 @@ import androidx.compose.ui.unit.dp
 import yahvya.meteo_app.components.SearchbarComponent
 import yahvya.meteo_app.dtos.WeatherDto
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.TextButton
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import yahvya.meteo_app.components.FavoritePreviewComponent
+import yahvya.meteo_app.components.GetLocationComponent
 import yahvya.meteo_app.components.WeatherPreviewComponent
+import yahvya.meteo_app.dtos.HourlyWeatherData
 
 /**
  * @brief home page
@@ -40,6 +46,29 @@ fun HomeView(
     val proposals = remember { mutableStateListOf<WeatherDto>() }
     val favorites = remember { mutableStateListOf<WeatherDto>() }
 
+    proposals.add(
+        WeatherDto(
+            placeName = "Nom",
+            cloudMeasureUnit = "mm",
+            windSpeedUnit = "km/h",
+            temperatureMeasures = mutableListOf(
+                HourlyWeatherData(
+                    date = "2024-12-17T07:00",
+                    temperatureMax = "90",
+                    temperatureMin = "10",
+                    temperature = "300",
+                    rainMeasure = "20",
+                    cloudHighMeasure = "10",
+                    cloudLowMeasure = "10"
+                )
+            ),
+            temperatureUnit = "°C",
+            latitude = "lat",
+            longitude = "lont",
+            rainMeasureUnit = "mm"
+        )
+    );
+
     Column(
         modifier= modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp),
@@ -51,6 +80,14 @@ fun HomeView(
             searchbarPlaceholder = "Rechercher une ville",
             description = "Rechercher une ville",
             onButtonClicked = {}
+        )
+
+        GetLocationComponent(
+            modifier=Modifier
+                .align(Alignment.CenterHorizontally)
+                .width(200.dp),
+            onLocationGet = {},
+            onDeny = {}
         )
 
         // search propositions / results

@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -60,7 +61,7 @@ fun GetLocationComponent(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Me localiser")
+            Text(text= "Me localiser", fontSize = 17.sp)
             Icon(imageVector = Icons.Filled.LocationOn, contentDescription = "Location")
         }
     }

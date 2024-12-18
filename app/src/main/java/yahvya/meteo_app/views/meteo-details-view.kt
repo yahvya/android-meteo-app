@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import yahvya.meteo_app.dtos.HourlyWeatherData
 import yahvya.meteo_app.dtos.WeatherDto
+import java.time.LocalDateTime
 
 /**
  * @brief text with border component
@@ -43,7 +44,7 @@ fun BoxedText(key:String,value:String){
             .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
             .padding(5.dp)
     ) {
-       Text("${key} : ", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+       Text("$key : ", fontSize = 18.sp, fontWeight = FontWeight.Bold)
        Text(value)
     }
 }
@@ -60,14 +61,23 @@ fun MeteoDetailsView(
     weatherDto: WeatherDto,
     onAddInFavorites: () -> Unit
 ){
-    var expanded = remember { mutableStateOf(false) }
-    var optionsMap = mutableMapOf<String,HourlyWeatherData>()
-    val hourlyDataToShow = remember {mutableStateOf<HourlyWeatherData?>(null)}
+    val expanded = remember { mutableStateOf(false) }
+    val optionsMap = mutableMapOf<String,HourlyWeatherData>()
 
     // create a map indexed by the date and as value the hourly data
     weatherDto.temperatureMeasures.forEach{
         optionsMap[it.date] = it
     }
+
+    var defaultItemToShow:HourlyWeatherData? = null
+
+    // show the last hour
+    val greaterKey = optionsMap.keys.maxWithOrNull(compareBy{LocalDateTime.parse(it)})
+
+    if(greaterKey !== null)
+        defaultItemToShow = optionsMap[greaterKey]
+
+    val hourlyDataToShow = remember {mutableStateOf<HourlyWeatherData?>(defaultItemToShow)}
 
     Column(
         modifier= modifier.padding(10.dp),
@@ -104,8 +114,8 @@ fun MeteoDetailsView(
                     DropdownMenuItem(
                         text = { Text(it.key) },
                         onClick = {
-                            expanded.value = false
                             hourlyDataToShow.value = it.value
+                            expanded.value = false
                         }
                     )
                 }
@@ -143,7 +153,7 @@ fun MeteoDetailsViewPreview(){
             temperatureUnit = "°C",
             temperatureMeasures = mutableListOf(
                 HourlyWeatherData(
-                    date = "2024-02-17",
+                    date = "2024-12-17T06:00",
                     temperatureMax = "100",
                     temperatureMin = "0",
                     temperature = "30",
@@ -152,13 +162,13 @@ fun MeteoDetailsViewPreview(){
                     cloudLowMeasure = "20"
                 ),
                 HourlyWeatherData(
-                    date = "2024-02-18",
-                    temperatureMax = "100",
-                    temperatureMin = "0",
-                    temperature = "30",
-                    rainMeasure = "30",
-                    cloudHighMeasure = "30",
-                    cloudLowMeasure = "20"
+                    date = "2024-12-17T07:00",
+                    temperatureMax = "90",
+                    temperatureMin = "10",
+                    temperature = "300",
+                    rainMeasure = "20",
+                    cloudHighMeasure = "10",
+                    cloudLowMeasure = "10"
                 )
             )
         ),
