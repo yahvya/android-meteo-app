@@ -67,7 +67,9 @@ fun HomeView(
             longitude = "lont",
             rainMeasureUnit = "mm"
         )
-    );
+    )
+
+    favorites.add(proposals[0])
 
     Column(
         modifier= modifier.padding(10.dp),
