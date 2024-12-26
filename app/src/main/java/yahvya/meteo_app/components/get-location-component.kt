@@ -24,6 +24,9 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationToken
+import com.google.android.gms.tasks.OnTokenCanceledListener
 
 /**
  * @brief component to get user location
@@ -77,11 +80,14 @@ private fun getLastKnownLocation(
     fusedLocationClient: FusedLocationProviderClient,
     onLocationReceived: (Location?) -> Unit
 ) {
-    fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-        onLocationReceived(location)
-    }.addOnFailureListener {
-        onLocationReceived(null)
-    }
+    fusedLocationClient.getCurrentLocation(
+        Priority.PRIORITY_HIGH_ACCURACY,
+        object: CancellationToken(){
+            override fun onCanceledRequested(p0: OnTokenCanceledListener): CancellationToken = this
+
+            override fun isCancellationRequested(): Boolean = false
+        }
+    ).addOnSuccessListener { onLocationReceived(it) }
 }
 
 @Composable
@@ -90,9 +96,7 @@ fun GetLocationComponentPreview(){
     GetLocationComponent(
         modifier = Modifier,
         onLocationGet = {location ->
-            if(location != null){
-                Log.d("info","Longitude : ${location.longitude} - Latitude : ${location.latitude}")
-            }
+            Log.d("info","Longitude : ${location?.longitude} - Latitude : ${location?.latitude}")
         },
         onDeny = {
             Log.d("info","Permission refusée")
