@@ -1,5 +1,6 @@
 package yahvya.meteo_app.views
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,36 +41,11 @@ import yahvya.meteo_app.dtos.HourlyWeatherData
 @Composable
 fun HomeView(
     modifier:Modifier,
-    lookAllFavoritesClick: (Int) -> Unit
+    lookAllFavoritesClick: () -> Unit
 ){
     val research = remember { mutableStateOf("") }
     val proposals = remember { mutableStateListOf<WeatherDto>() }
     val favorites = remember { mutableStateListOf<WeatherDto>() }
-
-    proposals.add(
-        WeatherDto(
-            placeName = "Nom",
-            cloudMeasureUnit = "mm",
-            windSpeedUnit = "km/h",
-            temperatureMeasures = mutableListOf(
-                HourlyWeatherData(
-                    date = "2024-12-17T07:00",
-                    temperatureMax = "90",
-                    temperatureMin = "10",
-                    temperature = "300",
-                    rainMeasure = "20",
-                    cloudHighMeasure = "10",
-                    cloudLowMeasure = "10"
-                )
-            ),
-            temperatureUnit = "°C",
-            latitude = "lat",
-            longitude = "lont",
-            rainMeasureUnit = "mm"
-        )
-    )
-
-    favorites.add(proposals[0])
 
     Column(
         modifier= modifier.padding(10.dp),
@@ -136,10 +112,14 @@ fun HomeView(
             }
 
             // see more favorites
-            ClickableText(
-                text= AnnotatedString(text= "Voir plus ..."),
-                onClick = lookAllFavoritesClick,
-                style = TextStyle(Color(13,110,253),18.sp, textDecoration = TextDecoration.Underline)
+            Text(
+                text= "Voir plus ...",
+                modifier= Modifier.clickable {
+                    lookAllFavoritesClick()
+                },
+                color = Color(red=13,green=110,blue=253),
+                fontSize = 18.sp,
+                textDecoration = TextDecoration.Underline
             )
         }
     }
