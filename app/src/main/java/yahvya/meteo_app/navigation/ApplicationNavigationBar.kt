@@ -1,6 +1,7 @@
 package yahvya.meteo_app.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -27,7 +28,7 @@ fun ApplicationNavigationBar(navController: NavController){
             selected = navController.currentDestination?.route == Routes.FAVORITES,
             onClick = { navController.navigate(route = Routes.FAVORITES) },
             label = { Text(text = "Favoris") },
-            icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = "") }
+            icon = { Icon(imageVector = Icons.Filled.Favorite, contentDescription = "") }
         )
     }
 }
