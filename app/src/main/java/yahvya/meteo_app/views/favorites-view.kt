@@ -18,26 +18,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import yahvya.meteo_app.components.FavoritePreviewComponent
+import yahvya.meteo_app.viewmodels.WeatherDetailsViewModel
 
 /**
  * @brief favorites page
  * @param modifier modifier
+ * @param onWeatherPreviewClick action on details click
+ * @param weatherDetailsViewModel weather details view model
  */
 @Composable
-fun FavoritesView(modifier:Modifier){
+fun FavoritesView(
+    modifier:Modifier,
+    onWeatherPreviewClick: () -> Unit,
+    weatherDetailsViewModel: WeatherDetailsViewModel = viewModel()
+){
     val favorites = remember { mutableStateListOf<WeatherDto>() }
-
-    favorites.add(WeatherDto(
-        placeName = "Corte",
-        longitude = "-122.083922",
-        latitude = "37.4220936",
-        cloudMeasureUnit = "%",
-        windSpeedUnit = "Km/h",
-        rainMeasureUnit = "mm",
-        temperatureUnit = "°C",
-        temperatureMeasures = mutableListOf()
-    ))
 
     Column(
         modifier= modifier.padding(10.dp),
@@ -61,7 +58,10 @@ fun FavoritesView(modifier:Modifier){
                         modifier = Modifier.fillMaxWidth(),
                         weatherDto = item,
                         isFavorite = isSelected,
-                        onButtonClicked = {}
+                        onButtonClicked = {
+                            weatherDetailsViewModel.weatherDto = item
+                            onWeatherPreviewClick()
+                        }
                     )
                 }
             }
@@ -75,5 +75,5 @@ fun FavoritesView(modifier:Modifier){
 @Composable
 @Preview
 fun FavoritesViewPreview(){
-    FavoritesView(modifier = Modifier)
+    FavoritesView(modifier = Modifier, onWeatherPreviewClick = {})
 }

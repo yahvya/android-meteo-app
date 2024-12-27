@@ -12,13 +12,8 @@ import androidx.navigation.compose.rememberNavController
 import yahvya.meteo_app.navigation.ApplicationNavigationBar
 import yahvya.meteo_app.navigation.NavigationGraph
 import yahvya.meteo_app.ui.theme.MeteoappTheme
-import yahvya.meteo_app.viewmodels.MainModel
 
 class MainActivity : ComponentActivity() {
-    /**
-     * @brief main model
-     */
-    private val mainModel by viewModels<MainModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +30,6 @@ class MainActivity : ComponentActivity() {
                     content = {
                         NavigationGraph(
                             navController= navController,
-                            mainModel= this.mainModel,
                             modifier = Modifier.padding(it)
                         )
                     }

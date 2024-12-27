@@ -19,7 +19,9 @@ fun ApplicationNavigationBar(navController: NavController){
     NavigationBar {
         NavigationBarItem(
             selected = navController.currentDestination?.route == Routes.HOME_PAGE,
-            onClick = { navController.navigate(route = Routes.HOME_PAGE) },
+            onClick = {
+                navController.navigate(route = Routes.HOME_PAGE)
+            },
             label = { Text(text = "Accueil") },
             icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = "") }
         )
