@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import yahvya.meteo_app.components.SearchbarComponent
 import yahvya.meteo_app.dtos.WeatherDto
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +46,7 @@ fun HomeView(
     homeViewModel: HomeViewModel = viewModel(),
     weatherDetailsViewModel: WeatherDetailsViewModel = viewModel()
 ){
-    val proposals = remember { mutableStateListOf<WeatherDto>() }
+    val proposals = homeViewModel.getProposalsState().value
     val favorites = remember { mutableStateListOf<WeatherDto>() }
 
     Column(
@@ -60,11 +61,18 @@ fun HomeView(
         )
 
         // searchbar
+        val searchState = homeViewModel.getResearchState()
+
+        LaunchedEffect(searchState.value) {
+            homeViewModel.searchProposals(search = searchState.value)
+        }
+
         SearchbarComponent(
             modifier= Modifier.fillMaxWidth(),
-            textFieldValue = homeViewModel.getResearchState(),
+            textFieldValue = searchState,
             searchbarPlaceholder = "Rechercher une ville"
         )
+
 
         GetLocationComponent(
             modifier=Modifier

@@ -98,7 +98,9 @@ fun WeatherDetailsView(
                 Text(
                     text= weatherDto.placeName,
                     fontSize = 25.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.weight(weight= 1f, fill = false),
+                    lineHeight = 35.sp
                 )
                 Button(onClick = onAddInFavorites) {
                     Text("Ajouter aux favoris")

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import yahvya.meteo_app.dtos.WeatherDto
 
 /**
@@ -39,7 +40,11 @@ fun WeatherPreviewComponent(
         horizontalArrangement = Arrangement.SpaceBetween,
         
     ) {
-        Text(weatherDto.placeName)
+        Text(
+            text= weatherDto.placeName,
+            modifier = Modifier.weight(weight= 1f, fill = false),
+            lineHeight = 35.sp
+        )
         IconButton(onClick = onButtonClicked) {
             Icon(imageVector = Icons.Filled.Info, contentDescription = "Informations")
         }
