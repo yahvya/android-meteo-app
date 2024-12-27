@@ -3,7 +3,6 @@ package yahvya.meteo_app.views
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,7 +18,6 @@ import yahvya.meteo_app.components.SearchbarComponent
 import yahvya.meteo_app.dtos.WeatherDto
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -50,100 +48,102 @@ fun HomeView(
     val proposals = homeViewModel.getProposalsState().value
     val favorites = remember { mutableStateListOf<WeatherDto>() }
 
-    Column(
+    LazyColumn(
         modifier= modifier.padding(10.dp),
-        verticalArrangement = Arrangement.spacedBy(30.dp),
+        verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
-        Text(
-            text = "Ma méteo".uppercase(),
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom= 20.dp,top= 5.dp)
-        )
-
-        // searchbar
-        val searchState = homeViewModel.getResearchState()
-
-        LaunchedEffect(searchState.value) {
-            homeViewModel.searchProposals(search = searchState.value)
+        item{
+            Text(
+                text = "Ma méteo".uppercase(),
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom= 20.dp,top= 5.dp)
+            )
         }
 
-        SearchbarComponent(
-            modifier= Modifier.fillMaxWidth(),
-            textFieldValue = searchState,
-            searchbarPlaceholder = "Rechercher une ville"
-        )
+        // searchbar
+        item{
+            val searchState = homeViewModel.getResearchState()
+
+            LaunchedEffect(searchState.value) {
+                homeViewModel.searchProposals(search = searchState.value)
+            }
+
+            SearchbarComponent(
+                modifier= Modifier.fillMaxWidth(),
+                textFieldValue = searchState,
+                searchbarPlaceholder = "Rechercher une ville"
+            )
+        }
 
         // search from location
-        GetLocationComponent(
-            modifier=Modifier
-                .align(Alignment.CenterHorizontally)
-                .fillMaxWidth(),
-            onLocationGet = { location ->
-                if(location != null)
-                    homeViewModel.searchFromLocation(longitude = location.longitude, latitude = location.latitude)
-                else
-                    Log.d("Recherche","Localisation non récupérée")
-            },
-            onDeny = {}
-        )
+        item{
+            GetLocationComponent(
+                modifier=Modifier
+                    .fillMaxWidth(),
+                onLocationGet = { location ->
+                    if(location != null)
+                        homeViewModel.searchFromLocation(longitude = location.longitude, latitude = location.latitude)
+                    else
+                        Log.d("Recherche","Localisation non récupérée")
+                },
+                onDeny = {}
+            )
+        }
 
         // search propositions / results
         if(proposals.isNotEmpty()){
-            Text(
-                text= "Résultats",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold
-            )
+            item{
+                Text(
+                    text= "Résultats",
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(items= proposals){ item ->
-                    WeatherPreviewComponent(
-                        modifier = Modifier.fillMaxWidth(),
-                        weatherDto = item,
-                        onButtonClicked = {
-                            weatherDetailsViewModel.weatherDto = item
-                            onWeatherPreviewClick()
-                        }
-                    )
-                }
+            items(items= proposals){ item ->
+                WeatherPreviewComponent(
+                    modifier = Modifier.fillMaxWidth(),
+                    weatherDto = item,
+                    onButtonClicked = {
+                        weatherDetailsViewModel.weatherDto = item
+                        onWeatherPreviewClick()
+                    }
+                )
             }
         }
 
         // certain favorites
         if(favorites.isNotEmpty()){
-            Text(
-                text= "Vos favoris",
-                fontSize = 25.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(items= favorites){ item ->
-                    val favoriteState = remember { mutableStateOf(true) }
-                    FavoritePreviewComponent(
-                        modifier = Modifier.fillMaxWidth(),
-                        weatherDto = item,
-                        isFavorite = favoriteState,
-                        onButtonClicked = {}
-                    )
-                }
+            item {
+                Text(
+                    text = "Vos favoris",
+                    fontSize = 25.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            items(items= favorites){ item ->
+                val favoriteState = remember { mutableStateOf(true) }
+                FavoritePreviewComponent(
+                    modifier = Modifier.fillMaxWidth(),
+                    weatherDto = item,
+                    isFavorite = favoriteState,
+                    onButtonClicked = {}
+                )
             }
 
-            // see more favorites
-            Text(
-                text= "Voir plus ...",
-                modifier= Modifier.clickable {
-                    lookAllFavoritesClick()
-                },
-                color = Color(red=13,green=110,blue=253),
-                fontSize = 18.sp,
-                textDecoration = TextDecoration.Underline
-            )
+            item{
+                // see more favorites
+                Text(
+                    text= "Voir plus ...",
+                    modifier= Modifier.clickable {
+                        lookAllFavoritesClick()
+                    },
+                    color = Color(red=13,green=110,blue=253),
+                    fontSize = 18.sp,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
         }
     }
 }

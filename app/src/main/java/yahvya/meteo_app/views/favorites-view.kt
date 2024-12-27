@@ -1,7 +1,6 @@
 package yahvya.meteo_app.views
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,38 +35,38 @@ fun FavoritesView(
 ){
     val favorites = remember { mutableStateListOf<WeatherDto>() }
 
-    Column(
+    LazyColumn(
         modifier= modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp),
     ) {
-        Text(
-            text= "Vos favoris",
-            fontSize = 25.sp,
-            fontWeight = FontWeight.Bold
-        )
+        item{
+            Text(
+                text= "Vos favoris".uppercase(),
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
 
         if(favorites.isNotEmpty()){
             // favorites list
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items(items= favorites){ item ->
-                    val isSelected = remember{ mutableStateOf(true) }
+            items(items= favorites){ item ->
+                val isSelected = remember{ mutableStateOf(value= true) }
 
-                    FavoritePreviewComponent(
-                        modifier = Modifier.fillMaxWidth(),
-                        weatherDto = item,
-                        isFavorite = isSelected,
-                        onButtonClicked = {
-                            weatherDetailsViewModel.weatherDto = item
-                            onWeatherPreviewClick()
-                        }
-                    )
-                }
+                FavoritePreviewComponent(
+                    modifier = Modifier.fillMaxWidth(),
+                    weatherDto = item,
+                    isFavorite = isSelected,
+                    onButtonClicked = {
+                        weatherDetailsViewModel.weatherDto = item
+                        onWeatherPreviewClick()
+                    }
+                )
             }
         }
         else{
-            Text("Vous n'avez pas de favoris enregistré", fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+            item{
+                Text(text= "Vous n'avez pas de favoris enregistré", fontSize = 18.sp, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold)
+            }
         }
     }
 }
