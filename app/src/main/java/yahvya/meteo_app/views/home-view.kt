@@ -1,5 +1,6 @@
 package yahvya.meteo_app.views
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -73,12 +74,17 @@ fun HomeView(
             searchbarPlaceholder = "Rechercher une ville"
         )
 
-
+        // search from location
         GetLocationComponent(
             modifier=Modifier
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth(),
-            onLocationGet = {},
+            onLocationGet = { location ->
+                if(location != null)
+                    homeViewModel.searchFromLocation(longitude = location.longitude, latitude = location.latitude)
+                else
+                    Log.d("Recherche","Localisation non récupérée")
+            },
             onDeny = {}
         )
 

@@ -60,9 +60,7 @@ fun WeatherPreviewComponentPreview(){
             placeName = "Corte",
             longitude = "-122.083922",
             latitude = "37.4220936",
-            cloudMeasureUnit = "%",
             windSpeedUnit = "Km/h",
-            rainMeasureUnit = "mm",
             temperatureUnit = "°C",
             temperatureMeasures = mutableListOf()
         ),

@@ -9,6 +9,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import yahvya.meteo_app.apis.geocoding.GeocodingRetrofit
+import yahvya.meteo_app.apis.openweather.OpenWeatherRetrofit
 import yahvya.meteo_app.dtos.WeatherDto
 
 /**
@@ -30,6 +31,10 @@ class HomeViewModel : ViewModel(){
      */
     private var citiesSearchJob: Job? = null
 
+    /**
+     * @brief search proposals from research string
+     * @param search research
+     */
     fun searchProposals(search: String){
         if(search.isBlank()){
             proposals.value = listOf()
@@ -42,26 +47,48 @@ class HomeViewModel : ViewModel(){
             delay(timeMillis = 300)
 
             try{
+                // find cities
                 val cities = GeocodingRetrofit.INSTANCE.getCities(placeName = search)?.results
 
-                if(cities === null)
-                    proposals.value = listOf()
-                else
-                    proposals.value = cities.map{WeatherDto(
-                        placeName = it.toDisplay(),
-                        longitude = it.longitude.toString(),
-                        latitude = it.latitude.toString(),
-                        temperatureUnit = "",
-                        windSpeedUnit = "",
-                        cloudMeasureUnit = "",
-                        rainMeasureUnit = "",
-                        temperatureMeasures = mutableListOf(),
-                    )}
+                if(cities !== null){
+                    proposals.value = cities.mapNotNull { cityDto ->
+                        // find weather from city location
+                        val result = OpenWeatherRetrofit.INSTANCE.getWeatherOf(
+                            longitude = cityDto.longitude,
+                            latitude = cityDto.latitude
+                        )
 
+                        if (result !== null) WeatherDto.fromOpenWeatherDto(openWeatherDto = result,placeDisplayName = cityDto.toDisplay()) else null
+                    }
+                }
+                else
+                    proposals.value = listOf()
             }
             catch(e:Exception){
                 Log.d("Recherche erreur",e.toString())
             }
+        }
+    }
+
+    /**
+     * @brief search weather data from location
+     * @param longitude longitude
+     * @param latitude latitude
+     */
+    fun searchFromLocation(longitude: Double,latitude:Double){
+        try{
+            this.citiesSearchJob?.cancel()
+            this.citiesSearchJob = viewModelScope.launch {
+                var openWeatherDto = OpenWeatherRetrofit.INSTANCE.getWeatherOf(longitude = longitude,latitude= latitude)
+
+                if(openWeatherDto != null)
+                    proposals.value = listOf(WeatherDto.fromOpenWeatherDto(openWeatherDto = openWeatherDto))
+                else
+                    Log.d("Recherche location","Valeur null")
+            }
+        }
+        catch(e:Exception){
+            Log.d("Recherche erreur location",e.toString())
         }
     }
 
