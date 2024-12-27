@@ -11,7 +11,7 @@ interface GeocodingRequests {
     /**
      * @brief find cities
      */
-    @GET(value="search")
+    @GET(value="search/?language=fr")
     suspend fun getCities(
         @Query(value="name") placeName: String
     ):CityResultDto?
