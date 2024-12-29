@@ -1,5 +1,6 @@
 package yahvya.meteo_app.views
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import yahvya.meteo_app.dtos.WeatherDto
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
@@ -36,6 +38,7 @@ import yahvya.meteo_app.viewmodels.WeatherDetailsViewModel
  * @param onWeatherPreviewClick action on details click
  * @param homeViewModel home view model
  * @param weatherDetailsViewModel weather details view model
+ * @param context context
  */
 @Composable
 fun HomeView(
@@ -43,7 +46,8 @@ fun HomeView(
     lookAllFavoritesClick: () -> Unit,
     onWeatherPreviewClick: () -> Unit,
     homeViewModel: HomeViewModel = viewModel(),
-    weatherDetailsViewModel: WeatherDetailsViewModel = viewModel()
+    weatherDetailsViewModel: WeatherDetailsViewModel = viewModel(),
+    context: Context = LocalContext.current
 ){
     val proposals = homeViewModel.getProposalsState().value
     val favorites = remember { mutableStateListOf<WeatherDto>() }
@@ -66,7 +70,7 @@ fun HomeView(
             val searchState = homeViewModel.getResearchState()
 
             LaunchedEffect(searchState.value) {
-                homeViewModel.searchProposals(search = searchState.value)
+                homeViewModel.searchProposals(search = searchState.value,context= context)
             }
 
             SearchbarComponent(
@@ -83,7 +87,7 @@ fun HomeView(
                     .fillMaxWidth(),
                 onLocationGet = { location ->
                     if(location != null)
-                        homeViewModel.searchFromLocation(longitude = location.longitude, latitude = location.latitude)
+                        homeViewModel.searchFromLocation(longitude = location.longitude, latitude = location.latitude,context= context)
                     else
                         Log.d("Recherche","Localisation non récupérée")
                 },

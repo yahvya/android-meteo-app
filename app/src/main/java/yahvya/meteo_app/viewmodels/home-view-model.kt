@@ -1,5 +1,6 @@
 package yahvya.meteo_app.viewmodels
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -8,7 +9,9 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import yahvya.meteo_app.apis.geocoding.GeocodingRequests
 import yahvya.meteo_app.apis.geocoding.GeocodingRetrofit
+import yahvya.meteo_app.apis.openweather.OpenWeatherRequests
 import yahvya.meteo_app.apis.openweather.OpenWeatherRetrofit
 import yahvya.meteo_app.dtos.WeatherDto
 
@@ -32,10 +35,27 @@ class HomeViewModel : ViewModel(){
     private var citiesSearchJob: Job? = null
 
     /**
+     * @brief geocoding api request maker
+     */
+    private var geocodingRequestsMaker: GeocodingRequests? = null
+
+    /**
+     * @brief open weather api requests maker
+     */
+    private var openWeatherRequestsMaker: OpenWeatherRequests? = null
+
+    /**
      * @brief search proposals from research string
      * @param search research
+     * @param context context
      */
-    fun searchProposals(search: String){
+    fun searchProposals(search: String,context: Context){
+        if(this.geocodingRequestsMaker === null)
+            this.geocodingRequestsMaker = GeocodingRetrofit.getGeocodingRetrofitInstance(context= context).create(GeocodingRequests::class.java)
+
+        if(this.openWeatherRequestsMaker === null)
+            this.openWeatherRequestsMaker = OpenWeatherRetrofit.getOpenWeatherRetrofitInstance(context = context).create(OpenWeatherRequests::class.java)
+
         if(search.isBlank()){
             proposals.value = listOf()
             return
@@ -48,12 +68,12 @@ class HomeViewModel : ViewModel(){
 
             try{
                 // find cities
-                val cities = GeocodingRetrofit.INSTANCE.getCities(placeName = search)?.results
+                val cities = geocodingRequestsMaker!!.getCities(placeName = search)?.results
 
                 if(cities !== null){
                     proposals.value = cities.mapNotNull { cityDto ->
                         // find weather from city location
-                        val result = OpenWeatherRetrofit.INSTANCE.getWeatherOf(
+                        val result = openWeatherRequestsMaker!!.getWeatherOf(
                             longitude = cityDto.longitude,
                             latitude = cityDto.latitude
                         )
@@ -74,12 +94,16 @@ class HomeViewModel : ViewModel(){
      * @brief search weather data from location
      * @param longitude longitude
      * @param latitude latitude
+     * @param context context
      */
-    fun searchFromLocation(longitude: Double,latitude:Double){
+    fun searchFromLocation(longitude: Double,latitude:Double,context: Context){
+        if(this.openWeatherRequestsMaker === null)
+            this.openWeatherRequestsMaker = OpenWeatherRetrofit.getOpenWeatherRetrofitInstance(context = context).create(OpenWeatherRequests::class.java)
+
         try{
             this.citiesSearchJob?.cancel()
             this.citiesSearchJob = viewModelScope.launch {
-                var openWeatherDto = OpenWeatherRetrofit.INSTANCE.getWeatherOf(longitude = longitude,latitude= latitude)
+                val openWeatherDto = openWeatherRequestsMaker!!.getWeatherOf(longitude = longitude,latitude= latitude)
 
                 if(openWeatherDto != null)
                     proposals.value = listOf(WeatherDto.fromOpenWeatherDto(openWeatherDto = openWeatherDto))
