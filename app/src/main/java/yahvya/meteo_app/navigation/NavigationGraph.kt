@@ -66,7 +66,6 @@ fun NavigationGraph(
         composable(route= Routes.WEATHER_DETAILS){
             WeatherDetailsView(
                 modifier = Modifier,
-                onAddInFavorites = {},
                 onBackToPrevious = {navController.popBackStack()},
                 weatherDetailsViewModel = weatherDetailsViewModel
             )

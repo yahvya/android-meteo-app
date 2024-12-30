@@ -53,6 +53,8 @@ fun HomeView(
     val favorites = homeViewModel.getFavoritesState()
     val userMessageState = homeViewModel.getUserMessageState()
 
+    homeViewModel.loadFavorites()
+
     LazyColumn(
         modifier= modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp)
@@ -117,7 +119,7 @@ fun HomeView(
                     modifier = Modifier.fillMaxWidth(),
                     weatherDto = item,
                     onViewClicked = {
-                        weatherDetailsViewModel.weatherDto = item
+                        weatherDetailsViewModel.weatherDto.value = item
                         onWeatherPreviewClick()
                     }
                 )
@@ -134,12 +136,20 @@ fun HomeView(
                 )
             }
             items(items= favorites.value){ item ->
-                val favoriteState = remember { mutableStateOf(true) }
+                val favoriteState = remember{mutableStateOf(item.isFavorite)}
+
+                LaunchedEffect(favoriteState.value) {
+                    homeViewModel.removeInFavorites(item)
+                }
+
                 FavoritePreviewComponent(
                     modifier = Modifier.fillMaxWidth(),
                     weatherDto = item,
                     isFavorite = favoriteState,
-                    onViewClicked = {}
+                    onViewClicked = {
+                        weatherDetailsViewModel.weatherDto.value = item
+                        onWeatherPreviewClick()
+                    }
                 )
             }
 

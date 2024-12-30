@@ -57,7 +57,7 @@ fun FavoritesView(
                     weatherDto = item,
                     isFavorite = isSelected,
                     onViewClicked = {
-                        weatherDetailsViewModel.weatherDto = item
+                        weatherDetailsViewModel.weatherDto.value = item
                         onWeatherPreviewClick()
                     }
                 )

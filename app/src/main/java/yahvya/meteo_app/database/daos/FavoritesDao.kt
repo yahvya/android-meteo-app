@@ -8,14 +8,14 @@ import yahvya.meteo_app.database.entities.FavoritesEntity
 @Dao
 interface FavoritesDao {
     @Insert
-    suspend fun insert(favoritesEntity: FavoritesEntity)
+    suspend fun insert(favoritesEntity: FavoritesEntity):Long
 
-    @Insert
-    suspend fun delete(favoritesEntity: FavoritesEntity)
+    @Query("DELETE FROM favorites WHERE id = :id")
+    suspend fun delete(id: Int)
 
     @Query(value = "SELECT * from favorites")
     suspend fun getAll(): List<FavoritesEntity>
 
-    @Query(value = "SELECT * FROM favorites LIMIT :countOfItems")
+    @Query(value = "SELECT * FROM favorites ORDER BY id DESC LIMIT :countOfItems")
     suspend fun getSomeones(countOfItems: Int): List<FavoritesEntity>
 }

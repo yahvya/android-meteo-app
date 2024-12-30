@@ -53,20 +53,18 @@ fun BoxedText(key:String,value:String){
 /**
  * @brief meteao details page
  * @param modifier modifier
- * @param onAddInFavorites event when add in favorites is clicked
  * @param onBackToPrevious go back to previous page
  * @param weatherDetailsViewModel page model
  */
 @Composable
 fun WeatherDetailsView(
     modifier: Modifier,
-    onAddInFavorites: () -> Unit,
     onBackToPrevious:() -> Unit,
     weatherDetailsViewModel: WeatherDetailsViewModel = viewModel(),
 ){
     val expanded = remember { mutableStateOf(false) }
     val optionsMap = mutableMapOf<String,TimeWeatherData>()
-    val weatherDto = weatherDetailsViewModel.weatherDto
+    val weatherDto = weatherDetailsViewModel.weatherDto.value
 
     if(weatherDto == null){
         val errorMessageState = remember { mutableStateOf<String?>("Vous n'avez pas accès à cette page ;)") }
@@ -90,7 +88,7 @@ fun WeatherDetailsView(
         if(greaterKey !== null)
             defaultItemToShow = optionsMap[greaterKey]
 
-        val dayData = remember {mutableStateOf<TimeWeatherData?>(defaultItemToShow)}
+        val dayData = remember {mutableStateOf(defaultItemToShow)}
 
         Column(
             modifier= modifier.padding(10.dp),
@@ -109,9 +107,14 @@ fun WeatherDetailsView(
                     modifier = Modifier.weight(weight= 1f, fill = false),
                     lineHeight = 35.sp
                 )
-                Button(onClick = onAddInFavorites) {
-                    Text("Ajouter aux favoris")
-                }
+                if(!weatherDto.isFavorite)
+                    Button(onClick = {weatherDetailsViewModel.addInFavorites()}) {
+                        Text("Ajouter aux favoris")
+                    }
+                else
+                    Button(onClick = {weatherDetailsViewModel.deleteInFavorites()}) {
+                        Text("Supprimer des favoris")
+                    }
             }
 
             // choose time menu
@@ -161,7 +164,7 @@ fun WeatherDetailsView(
 @Composable
 @Preview
 fun WeatherDetailsViewPreview(weatherDetailsViewModel: WeatherDetailsViewModel = viewModel()){
-    weatherDetailsViewModel.weatherDto = WeatherDto(
+    weatherDetailsViewModel.weatherDto.value = WeatherDto(
         placeName = "Corte",
         longitude = "-122.083922",
         latitude = "37.4220936",
@@ -172,7 +175,6 @@ fun WeatherDetailsViewPreview(weatherDetailsViewModel: WeatherDetailsViewModel =
 
     WeatherDetailsView(
         modifier = Modifier,
-        onAddInFavorites = {},
         onBackToPrevious = {}
     )
 }

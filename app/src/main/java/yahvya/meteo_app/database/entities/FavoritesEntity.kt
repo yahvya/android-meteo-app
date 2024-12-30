@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "favorites")
 data class FavoritesEntity(
     @PrimaryKey(autoGenerate = true)
-    val id:Int = 0,
-    val serializedContent: String
+    var id:Int = 0,
+    var serializedContent: String
 )

@@ -14,7 +14,6 @@ import yahvya.meteo_app.apis.geocoding.GeocodingRetrofit
 import yahvya.meteo_app.apis.openweather.OpenWeatherRequests
 import yahvya.meteo_app.apis.openweather.OpenWeatherRetrofit
 import yahvya.meteo_app.dtos.WeatherDto
-import kotlin.random.Random
 
 /**
  * @brief home view model
@@ -62,12 +61,19 @@ class HomeViewModel : ViewModel(){
         const val USER_TYPING_DELAY = 400L
     }
 
-    init{
-        // load some favorites
+    /**
+     * @brief load some favorites
+     */
+    fun loadFavorites(){
         viewModelScope.launch {
             favoritesState.value = MainActivity.database.favoritesDao()
-                .getSomeones(countOfItems = Random.nextInt(from = 1, until = 4))
+                .getSomeones(countOfItems = 4)
                 .map { WeatherDto.fromDatabaseEntity(favoritesEntity = it) }
+        }
+    }
+
+    fun removeInFavorites(weatherDto: WeatherDto){
+        viewModelScope.launch {
         }
     }
 

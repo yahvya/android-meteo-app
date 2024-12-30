@@ -42,10 +42,7 @@ fun FavoritePreviewComponent(
     Row(
         modifier= modifier
             .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
-            .padding(5.dp)
-            .clickable {
-                onViewClicked()
-            },
+            .padding(5.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -54,8 +51,13 @@ fun FavoritePreviewComponent(
             modifier = Modifier.weight(weight= 1f, fill = false),
             lineHeight = 35.sp
         )
-        Row {
-            Icon(imageVector = Icons.Filled.Info, contentDescription = "Informations")
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(onClick = onViewClicked) {
+                Icon(imageVector = Icons.Filled.Info, contentDescription = "Informations")
+            }
+
             IconButton(onClick = {isFavorite.value = !isFavorite.value}) {
                 if(isFavorite.value)
                     Icon(
