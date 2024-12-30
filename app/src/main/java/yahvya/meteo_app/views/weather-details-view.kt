@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import yahvya.meteo_app.components.AppMessageComponent
 import yahvya.meteo_app.dtos.TimeWeatherData
 import yahvya.meteo_app.dtos.WeatherDto
 import yahvya.meteo_app.viewmodels.WeatherDetailsViewModel
@@ -53,21 +54,27 @@ fun BoxedText(key:String,value:String){
  * @brief meteao details page
  * @param modifier modifier
  * @param onAddInFavorites event when add in favorites is clicked
+ * @param onBackToPrevious go back to previous page
  * @param weatherDetailsViewModel page model
  */
 @Composable
 fun WeatherDetailsView(
     modifier: Modifier,
     onAddInFavorites: () -> Unit,
-    weatherDetailsViewModel: WeatherDetailsViewModel = viewModel()
+    onBackToPrevious:() -> Unit,
+    weatherDetailsViewModel: WeatherDetailsViewModel = viewModel(),
 ){
     val expanded = remember { mutableStateOf(false) }
     val optionsMap = mutableMapOf<String,TimeWeatherData>()
-
     val weatherDto = weatherDetailsViewModel.weatherDto
 
     if(weatherDto == null){
+        val errorMessageState = remember { mutableStateOf<String?>("Vous n'avez pas accès à cette page ;)") }
 
+        AppMessageComponent(
+            messageState = errorMessageState,
+            onDismiss = { onBackToPrevious() }
+        )
     }
     else{
         // create a map indexed by the date and as value the hourly data
@@ -165,6 +172,7 @@ fun WeatherDetailsViewPreview(weatherDetailsViewModel: WeatherDetailsViewModel =
 
     WeatherDetailsView(
         modifier = Modifier,
-        onAddInFavorites = {}
+        onAddInFavorites = {},
+        onBackToPrevious = {}
     )
 }

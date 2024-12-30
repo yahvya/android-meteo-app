@@ -1,6 +1,7 @@
 package yahvya.meteo_app.components
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,18 +30,22 @@ import yahvya.meteo_app.dtos.WeatherDto
  * @param modifier modifier
  * @param weatherDto weather data
  * @param isFavorite state to update of favorite state pushed
+ * @param onViewClicked on view row clicked
  */
 @Composable
 fun FavoritePreviewComponent(
     modifier: Modifier,
     weatherDto: WeatherDto,
     isFavorite: MutableState<Boolean>,
-    onButtonClicked: () -> Unit
+    onViewClicked: () -> Unit
 ){
     Row(
         modifier= modifier
             .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
-            .padding(5.dp),
+            .padding(5.dp)
+            .clickable {
+                onViewClicked()
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -50,9 +55,7 @@ fun FavoritePreviewComponent(
             lineHeight = 35.sp
         )
         Row {
-            IconButton(onClick = onButtonClicked) {
-                Icon(imageVector = Icons.Filled.Info, contentDescription = "Informations")
-            }
+            Icon(imageVector = Icons.Filled.Info, contentDescription = "Informations")
             IconButton(onClick = {isFavorite.value = !isFavorite.value}) {
                 if(isFavorite.value)
                     Icon(
@@ -86,6 +89,6 @@ fun FavoritePreviewComponentPreview(){
             temperatureMeasures = mutableListOf()
         ),
         isFavorite = favoriteSelectionState,
-        onButtonClicked = {}
+        onViewClicked = {}
     )
 }

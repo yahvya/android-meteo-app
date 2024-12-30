@@ -1,6 +1,7 @@
 package yahvya.meteo_app.components
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,18 +24,21 @@ import yahvya.meteo_app.dtos.WeatherDto
  * @brief weather preview component
  * @param modifier modifier
  * @param weatherDto weather dto
- * @param onButtonClicked on information button clicked
+ * @param onViewClicked on information row clicked
  */
 @Composable
 fun WeatherPreviewComponent(
     modifier: Modifier,
     weatherDto: WeatherDto,
-    onButtonClicked: () -> Unit
+    onViewClicked: () -> Unit
 ){
     Row(
         modifier= modifier
             .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
-            .padding(5.dp),
+            .padding(5.dp)
+            .clickable {
+                onViewClicked()
+            },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
         
@@ -45,9 +48,7 @@ fun WeatherPreviewComponent(
             modifier = Modifier.weight(weight= 1f, fill = false),
             lineHeight = 35.sp
         )
-        IconButton(onClick = onButtonClicked) {
-            Icon(imageVector = Icons.Filled.Info, contentDescription = "Informations")
-        }
+        Icon(imageVector = Icons.Filled.Info, contentDescription = "Informations")
     }
 }
 
@@ -64,6 +65,6 @@ fun WeatherPreviewComponentPreview(){
             temperatureUnit = "°C",
             temperatureMeasures = mutableListOf()
         ),
-        onButtonClicked = {}
+        onViewClicked = {}
     )
 }

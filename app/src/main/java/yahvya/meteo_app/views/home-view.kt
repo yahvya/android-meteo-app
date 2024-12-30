@@ -1,7 +1,6 @@
 package yahvya.meteo_app.views
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import yahvya.meteo_app.components.AppMessageComponent
 import yahvya.meteo_app.components.FavoritePreviewComponent
 import yahvya.meteo_app.components.GetLocationComponent
 import yahvya.meteo_app.components.WeatherPreviewComponent
@@ -51,11 +51,16 @@ fun HomeView(
 ){
     val proposals = homeViewModel.getProposalsState().value
     val favorites = remember { mutableStateListOf<WeatherDto>() }
+    val userMessageState = homeViewModel.getUserMessageState()
 
     LazyColumn(
         modifier= modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(30.dp)
     ) {
+        item{
+            AppMessageComponent(messageState = userMessageState)
+        }
+
         item{
             Text(
                 text = "Ma méteo".uppercase(),
@@ -69,6 +74,7 @@ fun HomeView(
         item{
             val searchState = homeViewModel.getResearchState()
 
+            // search while user type
             LaunchedEffect(searchState.value) {
                 homeViewModel.searchProposals(search = searchState.value,context= context)
             }
@@ -83,15 +89,16 @@ fun HomeView(
         // search from location
         item{
             GetLocationComponent(
-                modifier=Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 onLocationGet = { location ->
                     if(location != null)
                         homeViewModel.searchFromLocation(longitude = location.longitude, latitude = location.latitude,context= context)
                     else
-                        Log.d("Recherche","Localisation non récupérée")
+                        userMessageState.value = "Echec de récupération de la localisation :("
                 },
-                onDeny = {}
+                onDeny = {
+                    userMessageState.value = "Vous avez bloqué l'utilisation de la location. Rendez-vous dans les paramètres ;)"
+                }
             )
         }
 
@@ -109,7 +116,7 @@ fun HomeView(
                 WeatherPreviewComponent(
                     modifier = Modifier.fillMaxWidth(),
                     weatherDto = item,
-                    onButtonClicked = {
+                    onViewClicked = {
                         weatherDetailsViewModel.weatherDto = item
                         onWeatherPreviewClick()
                     }
@@ -132,7 +139,7 @@ fun HomeView(
                     modifier = Modifier.fillMaxWidth(),
                     weatherDto = item,
                     isFavorite = favoriteState,
-                    onButtonClicked = {}
+                    onViewClicked = {}
                 )
             }
 

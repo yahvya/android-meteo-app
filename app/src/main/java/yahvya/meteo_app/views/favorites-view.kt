@@ -56,7 +56,7 @@ fun FavoritesView(
                     modifier = Modifier.fillMaxWidth(),
                     weatherDto = item,
                     isFavorite = isSelected,
-                    onButtonClicked = {
+                    onViewClicked = {
                         weatherDetailsViewModel.weatherDto = item
                         onWeatherPreviewClick()
                     }

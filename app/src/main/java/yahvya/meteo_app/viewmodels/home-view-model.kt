@@ -1,7 +1,6 @@
 package yahvya.meteo_app.viewmodels
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -27,7 +26,12 @@ class HomeViewModel : ViewModel(){
     /**
      * @brief results proposals
      */
-    private val proposals:MutableState<List<WeatherDto>> = mutableStateOf(listOf())
+    private val proposalsState:MutableState<List<WeatherDto>> = mutableStateOf(listOf())
+
+    /**
+     * @brief message to display to the user
+     */
+    private val userMessageState: MutableState<String?> = mutableStateOf(null)
 
     /**
      * @brief cities search coroutine
@@ -44,6 +48,13 @@ class HomeViewModel : ViewModel(){
      */
     private var openWeatherRequestsMaker: OpenWeatherRequests? = null
 
+    companion object{
+        /**
+         * @brief user typing delay to wait before launching requests
+         */
+        const val USER_TYPING_DELAY = 400L
+    }
+
     /**
      * @brief search proposals from research string
      * @param search research
@@ -58,21 +69,21 @@ class HomeViewModel : ViewModel(){
                 this.openWeatherRequestsMaker = OpenWeatherRetrofit.getOpenWeatherRetrofitInstance(context = context).create(OpenWeatherRequests::class.java)
 
             if(search.isBlank()){
-                proposals.value = listOf()
+                proposalsState.value = listOf()
                 return
             }
 
             this.citiesSearchJob?.cancel()
             this.citiesSearchJob = viewModelScope.launch {
                 // delay for user typing
-                delay(timeMillis = 300)
+                delay(timeMillis = USER_TYPING_DELAY)
 
                 try{
                     // find cities
                     val cities = geocodingRequestsMaker!!.getCities(placeName = search)?.results
 
                     if(cities !== null){
-                        proposals.value = cities.mapNotNull { cityDto ->
+                        proposalsState.value = cities.mapNotNull { cityDto ->
                             // find weather from city location
                             val result = openWeatherRequestsMaker!!.getWeatherOf(
                                 longitude = cityDto.longitude,
@@ -82,16 +93,18 @@ class HomeViewModel : ViewModel(){
                             if (result !== null) WeatherDto.fromOpenWeatherDto(openWeatherDto = result,placeDisplayName = cityDto.toDisplay()) else null
                         }
                     }
-                    else
-                        proposals.value = listOf()
+                    else{
+                        proposalsState.value = listOf()
+                        userMessageState.value = "Aucune proposition disponible la ville <${search}> :("
+                    }
                 }
-                catch(e:Exception){
-                    Log.d("Recherche erreur",e.toString())
+                catch(_:Exception){
+                    userMessageState.value = "Aucun résultat trouvé, pensez à vérifier l'état de la connexion :("
                 }
             }
         }
-        catch (e:Exception){
-            Log.d("Recherche erreur",e.toString())
+        catch (_:Exception){
+            userMessageState.value = "Erreur technique, pensez à relancer l'application :("
         }
     }
 
@@ -111,20 +124,18 @@ class HomeViewModel : ViewModel(){
                 try{
                     val openWeatherDto = openWeatherRequestsMaker!!.getWeatherOf(longitude = longitude,latitude= latitude)
 
-                    Log.d("Meteo resultat",openWeatherDto.toString())
-
                     if(openWeatherDto != null)
-                        proposals.value = listOf(WeatherDto.fromOpenWeatherDto(openWeatherDto = openWeatherDto))
+                        proposalsState.value = listOf(WeatherDto.fromOpenWeatherDto(openWeatherDto = openWeatherDto))
                     else
-                        Log.d("Recherche location","Valeur null")
+                        userMessageState.value = "Echec de récupération de la méteo de cette zone :("
                 }
                 catch(_:Exception){
-                    Log.d("Recherche location","exception")
+                    userMessageState.value = "Echec de récupération de la méteo de cette zone, pensez à vérifier l'état de la connexion :("
                 }
             }
         }
-        catch(e:Exception){
-            Log.d("Recherche erreur location",e.toString())
+        catch(_:Exception){
+            userMessageState.value = "Erreur technique, pensez à relancer l'application  :("
         }
     }
 
@@ -136,5 +147,10 @@ class HomeViewModel : ViewModel(){
     /**
      * @return proposals state
      */
-    fun getProposalsState():MutableState<List<WeatherDto>> = this.proposals
+    fun getProposalsState():MutableState<List<WeatherDto>> = this.proposalsState
+
+    /**
+     * @return user message state
+     */
+    fun getUserMessageState():MutableState<String?> = this.userMessageState
 }

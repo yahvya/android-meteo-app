@@ -67,6 +67,7 @@ fun NavigationGraph(
             WeatherDetailsView(
                 modifier = Modifier,
                 onAddInFavorites = {},
+                onBackToPrevious = {navController.popBackStack()},
                 weatherDetailsViewModel = weatherDetailsViewModel
             )
         }
