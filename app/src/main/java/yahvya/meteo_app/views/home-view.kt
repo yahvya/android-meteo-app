@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import yahvya.meteo_app.components.SearchbarComponent
-import yahvya.meteo_app.dtos.WeatherDto
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
@@ -127,7 +125,7 @@ fun HomeView(
         }
 
         // certain favorites
-        if(favorites.value.isNotEmpty()){
+        if(favorites.isNotEmpty()){
             item {
                 Text(
                     text = "Vos favoris",
@@ -135,11 +133,13 @@ fun HomeView(
                     fontWeight = FontWeight.Bold
                 )
             }
-            items(items= favorites.value){ item ->
+
+            items(items= favorites){ item ->
                 val favoriteState = remember{mutableStateOf(item.isFavorite)}
 
                 LaunchedEffect(favoriteState.value) {
-                    homeViewModel.removeInFavorites(item)
+                    if(!favoriteState.value)
+                        homeViewModel.removeInFavorites(item)
                 }
 
                 FavoritePreviewComponent(

@@ -2,6 +2,7 @@ package yahvya.meteo_app.viewmodels
 
 import android.content.Context
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,7 +33,7 @@ class HomeViewModel : ViewModel(){
     /**
      * @brief favorites
      */
-    private val favoritesState:MutableState<List<WeatherDto>> = mutableStateOf(listOf())
+    private val favoritesState = mutableStateListOf<WeatherDto>()
 
     /**
      * @brief message to display to the user
@@ -66,14 +67,23 @@ class HomeViewModel : ViewModel(){
      */
     fun loadFavorites(){
         viewModelScope.launch {
-            favoritesState.value = MainActivity.database.favoritesDao()
+            favoritesState.clear()
+            favoritesState.addAll(MainActivity.database.favoritesDao()
                 .getSomeones(countOfItems = 4)
-                .map { WeatherDto.fromDatabaseEntity(favoritesEntity = it) }
+                .map { WeatherDto.fromDatabaseEntity(favoritesEntity = it) })
         }
     }
 
     fun removeInFavorites(weatherDto: WeatherDto){
-        viewModelScope.launch {
+        val id = weatherDto.getEntityId()
+
+        if(id !== null){
+            viewModelScope.launch {
+                MainActivity.database
+                    .favoritesDao()
+                    .delete(id= id)
+                favoritesState.remove(weatherDto)
+            }
         }
     }
 
@@ -176,5 +186,8 @@ class HomeViewModel : ViewModel(){
      */
     fun getUserMessageState():MutableState<String?> = this.userMessageState
 
-    fun getFavoritesState(): MutableState<List<WeatherDto>> = this.favoritesState
+    /**
+     * @return favorites state
+     */
+    fun getFavoritesState() = this.favoritesState
 }

@@ -22,11 +22,31 @@ class FavoritesViewModel : ViewModel() {
      */
     fun loadFavorites(){
         viewModelScope.launch {
+            // allow user to move his finger
             favoritesState.clear()
             favoritesState.addAll(MainActivity.database
                 .favoritesDao()
                 .getAll()
                 .map { WeatherDto.fromDatabaseEntity(favoritesEntity = it) })
+        }
+    }
+
+    /**
+     * @brief remove to favorites
+     * @param weatherDto dto
+     */
+    fun removeFavorite(weatherDto: WeatherDto){
+        val id = weatherDto.getEntityId()
+
+        if(id !== null){
+            viewModelScope.launch {
+                MainActivity.database
+                    .favoritesDao()
+                    .delete(id= id)
+
+                // during my tests the remove was too quick and the user click on the next element
+                favoritesState.remove(weatherDto)
+            }
         }
     }
 

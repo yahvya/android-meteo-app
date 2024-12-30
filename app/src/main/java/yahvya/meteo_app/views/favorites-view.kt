@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,6 +53,11 @@ fun FavoritesView(
             // favorites list
             items(items= favorites){ item ->
                 val isSelected = remember{ mutableStateOf(value= true) }
+
+                LaunchedEffect(isSelected.value) {
+                    if(!isSelected.value)
+                        favoritesViewModel.removeFavorite(item)
+                }
 
                 FavoritePreviewComponent(
                     modifier = Modifier.fillMaxWidth(),

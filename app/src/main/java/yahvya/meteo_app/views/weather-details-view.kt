@@ -1,5 +1,6 @@
 package yahvya.meteo_app.views
 
+import android.content.Context
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,16 +57,20 @@ fun BoxedText(key:String,value:String){
  * @param modifier modifier
  * @param onBackToPrevious go back to previous page
  * @param weatherDetailsViewModel page model
+ * @param context context
  */
 @Composable
 fun WeatherDetailsView(
     modifier: Modifier,
     onBackToPrevious:() -> Unit,
     weatherDetailsViewModel: WeatherDetailsViewModel = viewModel(),
+    context:Context = LocalContext.current
 ){
     val expanded = remember { mutableStateOf(false) }
     val optionsMap = mutableMapOf<String,TimeWeatherData>()
     val weatherDto = weatherDetailsViewModel.weatherDto.value
+
+    weatherDetailsViewModel.loadActual(context = context)
 
     if(weatherDto == null){
         val errorMessageState = remember { mutableStateOf<String?>("Vous n'avez pas accès à cette page ;)") }
