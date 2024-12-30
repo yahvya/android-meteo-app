@@ -3,6 +3,7 @@ package yahvya.meteo_app.apis
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import java.io.File
@@ -19,8 +20,10 @@ object CacheConfig{
     fun getCacheInstance(context: Context,subfolder: String):Cache{
         val cachePath = File("${context.cacheDir.path}/${subfolder}")
 
+        Log.d("Chemin du cache",cachePath.path)
+
         if(!cachePath.isDirectory)
-            cachePath.mkdir()
+            cachePath.mkdirs()
 
         return Cache(
             cachePath,

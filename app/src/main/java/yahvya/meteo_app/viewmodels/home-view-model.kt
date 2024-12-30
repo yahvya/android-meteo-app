@@ -64,7 +64,7 @@ class HomeViewModel : ViewModel(){
 
             this.citiesSearchJob?.cancel()
             this.citiesSearchJob = viewModelScope.launch {
-                // check if user still typing
+                // delay for user typing
                 delay(timeMillis = 300)
 
                 try{
@@ -110,6 +110,8 @@ class HomeViewModel : ViewModel(){
             this.citiesSearchJob = viewModelScope.launch {
                 try{
                     val openWeatherDto = openWeatherRequestsMaker!!.getWeatherOf(longitude = longitude,latitude= latitude)
+
+                    Log.d("Meteo resultat",openWeatherDto.toString())
 
                     if(openWeatherDto != null)
                         proposals.value = listOf(WeatherDto.fromOpenWeatherDto(openWeatherDto = openWeatherDto))

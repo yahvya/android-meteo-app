@@ -27,7 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import yahvya.meteo_app.dtos.TimeWeatherData
 import yahvya.meteo_app.dtos.WeatherDto
 import yahvya.meteo_app.viewmodels.WeatherDetailsViewModel
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 /**
  * @brief text with border component
@@ -78,12 +78,12 @@ fun WeatherDetailsView(
         var defaultItemToShow:TimeWeatherData? = null
 
         // show the last hour
-        val greaterKey = optionsMap.keys.maxWithOrNull(compareBy{LocalDateTime.parse(it)})
+        val greaterKey = optionsMap.keys.minWithOrNull(compareBy{LocalDate.parse(it)})
 
         if(greaterKey !== null)
             defaultItemToShow = optionsMap[greaterKey]
 
-        val hourlyDataToShow = remember {mutableStateOf<TimeWeatherData?>(defaultItemToShow)}
+        val dayData = remember {mutableStateOf<TimeWeatherData?>(defaultItemToShow)}
 
         Column(
             modifier= modifier.padding(10.dp),
@@ -123,7 +123,7 @@ fun WeatherDetailsView(
                         DropdownMenuItem(
                             text = { Text(it.key) },
                             onClick = {
-                                hourlyDataToShow.value = it.value
+                                dayData.value = it.value
                                 expanded.value = false
                             }
                         )
@@ -132,16 +132,19 @@ fun WeatherDetailsView(
             }
 
             // print meteo data
-            if(hourlyDataToShow.value !== null){
+            if(dayData.value !== null){
                 // show the select hour data
-                val hourlyWeatherData = hourlyDataToShow.value!!
+                val toShow = dayData.value!!
 
                 Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                    BoxedText(key= "Date", value = hourlyWeatherData.time)
-                    BoxedText(key= "Temperature", value = "${hourlyWeatherData.temperature}${weatherDto.temperatureUnit}")
-                    BoxedText(key= "Temperature minimale", value = "${hourlyWeatherData.temperatureMin}${weatherDto.temperatureUnit}")
-                    BoxedText(key= "Temperature maximale", value = "${hourlyWeatherData.temperatureMax}${weatherDto.temperatureUnit}")
-                    BoxedText(key= "Temperature maximale", value = "${hourlyWeatherData.temperatureMax}${weatherDto.temperatureUnit}")
+                    BoxedText(key= "Date", value = toShow.time)
+                    BoxedText(key="Temps",value= WeatherDto.findDescriptionFromWeatherCode(code= toShow.weatherCode))
+                    BoxedText(key= "Temperature", value = "${toShow.temperature}${weatherDto.temperatureUnit}")
+                    BoxedText(key= "Temperature minimale", value = "${toShow.temperatureMin}${weatherDto.temperatureUnit}")
+                    BoxedText(key= "Temperature maximale", value = "${toShow.temperatureMax}${weatherDto.temperatureUnit}")
+                    BoxedText(key= "Vitesse du vent", value = "${toShow.windSpeed}${weatherDto.windSpeedUnit}")
+                    BoxedText(key= "Longitude", value = weatherDto.longitude)
+                    BoxedText(key= "Latitude", value = weatherDto.latitude)
                 }
             }
         }
@@ -157,20 +160,7 @@ fun WeatherDetailsViewPreview(weatherDetailsViewModel: WeatherDetailsViewModel =
         latitude = "37.4220936",
         windSpeedUnit = "Km/h",
         temperatureUnit = "°C",
-        temperatureMeasures = mutableListOf(
-            TimeWeatherData(
-                time = "2024-12-17T06:00",
-                temperatureMax = "100",
-                temperatureMin = "0",
-                temperature = "30",
-            ),
-            TimeWeatherData(
-                time = "2024-12-17T07:00",
-                temperatureMax = "90",
-                temperatureMin = "10",
-                temperature = "300",
-            )
-        )
+        temperatureMeasures = mutableListOf()
     )
 
     WeatherDetailsView(
