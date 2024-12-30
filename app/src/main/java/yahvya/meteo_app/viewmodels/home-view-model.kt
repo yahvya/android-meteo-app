@@ -158,8 +158,6 @@ class HomeViewModel : ViewModel(){
 
                     if(openWeatherDto != null)
                         proposalsState.value = listOf(WeatherDto.fromOpenWeatherDto(openWeatherDto = openWeatherDto))
-                    else
-                        userMessageState.value = "Echec de récupération de la méteo de cette zone :("
                 }
                 catch(_:Exception){
                     userMessageState.value = "Echec de récupération de la méteo de cette zone, pensez à vérifier l'état de la connexion :("
