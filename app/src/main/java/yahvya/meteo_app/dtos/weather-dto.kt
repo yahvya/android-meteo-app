@@ -1,8 +1,13 @@
 package yahvya.meteo_app.dtos
 
 import yahvya.meteo_app.apis.openweather.OpenWeatherDto
+import yahvya.meteo_app.database.entities.FavoritesEntity
 import java.time.LocalDate
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
+@Serializable
 /**
  * @brief weather data for a specific hour
  */
@@ -33,6 +38,7 @@ data class TimeWeatherData(
     val weatherCode: String
 )
 
+@Serializable
 /**
  * @brief weather expected data
  */
@@ -60,7 +66,16 @@ data class WeatherDto(
     /**
      * @brief temperature measures
      */
-    val temperatureMeasures: MutableList<TimeWeatherData>
+    val temperatureMeasures: MutableList<TimeWeatherData>,
+    /**
+     * @brief is in favorite
+     */
+    var isFavorite: Boolean = false,
+    /**
+     * @brief supplementary data
+     * @attention when loaded from entity will be filled with id containing the entity key
+     */
+    var supplementaryData: MutableMap<String,String> = mutableMapOf()
 ){
     companion object{
         /**
@@ -143,5 +158,38 @@ data class WeatherDto(
             return weatherDescriptionMap[code] ?: "Code inconnu"
         }
 
+        /**
+         * @brief create an instance from the generated database entity
+         */
+        fun fromDatabaseEntity(favoritesEntity: FavoritesEntity):WeatherDto{
+            val instance = Json.decodeFromString<WeatherDto>(favoritesEntity.serializedContent)
+
+            instance.isFavorite = true
+            instance.setSupplementaryFromEntity(entity= favoritesEntity)
+
+            return instance
+        }
     }
+
+    /**
+     * @brief set supplementary data from entity
+     * @param entity the linked entity
+     */
+    fun setSupplementaryFromEntity(entity: FavoritesEntity){
+        this.supplementaryData = mutableMapOf(
+            "id" to entity.id.toString()
+        )
+    }
+
+    /**
+     * @return the entity id if stored
+     */
+    fun getEntityId():Int? = this.supplementaryData["id"]?.toInt()
+
+    /**
+     * @brief convert the instance to a database entity
+     */
+    fun toDatabaseEntity():FavoritesEntity = FavoritesEntity(
+        serializedContent = Json.encodeToString(value= this)
+    )
 }

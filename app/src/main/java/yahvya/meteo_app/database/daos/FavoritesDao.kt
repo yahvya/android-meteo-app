@@ -15,4 +15,7 @@ interface FavoritesDao {
 
     @Query(value = "SELECT * from favorites")
     suspend fun getAll(): List<FavoritesEntity>
+
+    @Query(value = "SELECT * FROM favorites LIMIT :countOfItems")
+    suspend fun getSomeones(countOfItems: Int): List<FavoritesEntity>
 }

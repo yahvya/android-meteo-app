@@ -7,7 +7,5 @@ import androidx.room.PrimaryKey
 data class FavoritesEntity(
     @PrimaryKey(autoGenerate = true)
     val id:Int = 0,
-    val longitude: String,
-    val latitude: String,
-    val cityName: String?
+    val serializedContent: String
 )

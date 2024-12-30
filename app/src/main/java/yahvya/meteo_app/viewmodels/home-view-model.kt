@@ -8,11 +8,13 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import yahvya.meteo_app.MainActivity
 import yahvya.meteo_app.apis.geocoding.GeocodingRequests
 import yahvya.meteo_app.apis.geocoding.GeocodingRetrofit
 import yahvya.meteo_app.apis.openweather.OpenWeatherRequests
 import yahvya.meteo_app.apis.openweather.OpenWeatherRetrofit
 import yahvya.meteo_app.dtos.WeatherDto
+import kotlin.random.Random
 
 /**
  * @brief home view model
@@ -27,6 +29,11 @@ class HomeViewModel : ViewModel(){
      * @brief results proposals
      */
     private val proposalsState:MutableState<List<WeatherDto>> = mutableStateOf(listOf())
+
+    /**
+     * @brief favorites
+     */
+    private val favoritesState:MutableState<List<WeatherDto>> = mutableStateOf(listOf())
 
     /**
      * @brief message to display to the user
@@ -53,6 +60,15 @@ class HomeViewModel : ViewModel(){
          * @brief user typing delay to wait before launching requests
          */
         const val USER_TYPING_DELAY = 400L
+    }
+
+    init{
+        // load some favorites
+        viewModelScope.launch {
+            favoritesState.value = MainActivity.database.favoritesDao()
+                .getSomeones(countOfItems = Random.nextInt(from = 1, until = 4))
+                .map { WeatherDto.fromDatabaseEntity(favoritesEntity = it) }
+        }
     }
 
     /**
@@ -153,4 +169,6 @@ class HomeViewModel : ViewModel(){
      * @return user message state
      */
     fun getUserMessageState():MutableState<String?> = this.userMessageState
+
+    fun getFavoritesState(): MutableState<List<WeatherDto>> = this.favoritesState
 }

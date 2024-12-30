@@ -50,7 +50,7 @@ fun HomeView(
     context: Context = LocalContext.current
 ){
     val proposals = homeViewModel.getProposalsState().value
-    val favorites = remember { mutableStateListOf<WeatherDto>() }
+    val favorites = homeViewModel.getFavoritesState()
     val userMessageState = homeViewModel.getUserMessageState()
 
     LazyColumn(
@@ -125,7 +125,7 @@ fun HomeView(
         }
 
         // certain favorites
-        if(favorites.isNotEmpty()){
+        if(favorites.value.isNotEmpty()){
             item {
                 Text(
                     text = "Vos favoris",
@@ -133,7 +133,7 @@ fun HomeView(
                     fontWeight = FontWeight.Bold
                 )
             }
-            items(items= favorites){ item ->
+            items(items= favorites.value){ item ->
                 val favoriteState = remember { mutableStateOf(true) }
                 FavoritePreviewComponent(
                     modifier = Modifier.fillMaxWidth(),
