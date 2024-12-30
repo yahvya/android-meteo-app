@@ -125,10 +125,8 @@ class HomeViewModel : ViewModel(){
                             if (result !== null) WeatherDto.fromOpenWeatherDto(openWeatherDto = result,placeDisplayName = cityDto.toDisplay()) else null
                         }
                     }
-                    else{
+                    else
                         proposalsState.value = listOf()
-                        userMessageState.value = "Aucune proposition disponible la ville <${search}> :("
-                    }
                 }
                 catch(_:Exception){
                     userMessageState.value = "Aucun résultat trouvé, pensez à vérifier l'état de la connexion :("
@@ -158,6 +156,8 @@ class HomeViewModel : ViewModel(){
 
                     if(openWeatherDto != null)
                         proposalsState.value = listOf(WeatherDto.fromOpenWeatherDto(openWeatherDto = openWeatherDto))
+                    else
+                        userMessageState.value = "Echec de récupération de la méteo de cette zone :("
                 }
                 catch(_:Exception){
                     userMessageState.value = "Echec de récupération de la méteo de cette zone, pensez à vérifier l'état de la connexion :("
