@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import yahvya.meteo_app.dtos.WeatherDto
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -19,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import yahvya.meteo_app.components.FavoritePreviewComponent
+import yahvya.meteo_app.viewmodels.FavoritesViewModel
 import yahvya.meteo_app.viewmodels.WeatherDetailsViewModel
 
 /**
@@ -26,14 +25,16 @@ import yahvya.meteo_app.viewmodels.WeatherDetailsViewModel
  * @param modifier modifier
  * @param onWeatherPreviewClick action on details click
  * @param weatherDetailsViewModel weather details view model
+ * @param favoritesViewModel page view model
  */
 @Composable
 fun FavoritesView(
     modifier:Modifier,
     onWeatherPreviewClick: () -> Unit,
-    weatherDetailsViewModel: WeatherDetailsViewModel = viewModel()
+    weatherDetailsViewModel: WeatherDetailsViewModel = viewModel(),
+    favoritesViewModel: FavoritesViewModel = viewModel()
 ){
-    val favorites = remember { mutableStateListOf<WeatherDto>() }
+    val favorites = favoritesViewModel.getFavoritesState()
 
     LazyColumn(
         modifier= modifier.padding(10.dp),
